@@ -3,7 +3,7 @@
 
 # Paths
 model:
-  conch_model_path: "models/pytorch_model.bin"  # Path to CONCH model
+  conch_model_path: "/project/hnguyen2/mvu9/pretrained_checkpoints/conch_checkpoints/pytorch_model.bin"  # Path to CONCH model
   conch_config_path: "models/conch_config.json"     # Path to CONCH config
 
 data:
