@@ -3,7 +3,6 @@
 
 # Paths
 model:
-  conch_model_cfg: "conch_ViT-B-16"          # CONCH model config
   conch_checkpoint_path: "/project/hnguyen2/mvu9/pretrained_checkpoints/conch_checkpoints/pytorch_model.bin"  # Path to CONCH checkpoint
 
 data:
@@ -65,7 +64,10 @@ classification:
 
 # Zero-shot classification settings (if using CLIP-style text prompts)
 zeroshot:
-  enabled: false
+  enabled: true
+  
+  # Temperature for zero-shot classification (CONCH typically uses 0.01)
+  temperature: 0.01
   
   # Text prompts for each TCGA kidney tumor type
   prompts:
