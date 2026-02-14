@@ -85,7 +85,7 @@ class CONCHInference:
             
             # Import CONCH (if available)
             try:
-                from conch.create_model import create_model_from_pretrained
+                from conch.open_clip_custom import create_model_from_pretrained
                 model_cfg = model_config['conch_model_cfg']
                 checkpoint_path = model_config['conch_checkpoint_path']
                 self.model, self.preprocess = create_model_from_pretrained(
