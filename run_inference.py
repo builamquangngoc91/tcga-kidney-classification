@@ -249,7 +249,7 @@ class CONCHInference:
         for start_idx in range(0, n_samples, batch_size):
             end_idx = min(start_idx + batch_size, n_samples)
             batch_features = torch.from_numpy(features_normalized[start_idx:end_idx]).to(self.device)
-            batch_similarities = (batch_features @ text_embeddings.T * logit_scale).cpu().numpy()
+            batch_similarities = (batch_features @ text_embeddings.T * logit_scale).detach().cpu().numpy()
             batch_probs = self._softmax(batch_similarities, axis=1)
             all_probs.append(batch_probs)
         
