@@ -21,6 +21,7 @@ help:
 	@echo "  make run-kich        - Run inference on KICH only"
 	@echo "  make run-kirp        - Run inference on KIRP only"
 	@echo "  make run-cpu         - Run inference on CPU"
+	@echo "  make plot-heatmap   - Generate heatmaps from results"
 	@echo "  make clean           - Clean results directory"
 	@echo "  make setup           - Create necessary directories"
 	@echo ""
@@ -78,6 +79,16 @@ run-kirp:
 run-cpu:
 	@echo "Running CONCH inference on CPU..."
 	$(PYTHON) run_inference.py --config $(CONFIG) --output_dir $(OUTPUT_DIR) --device cpu
+
+# Generate heatmaps from inference results
+.PHONY: plot-heatmap
+plot-heatmap:
+	@echo "Generating heatmaps from results..."
+	@if not exist results\predictions.csv (
+		echo "Error: results\predictions.csv not found. Run inference first!"
+		exit /b 1
+	)
+	$(PYTHON) plot_heatmap.py --results results\predictions.csv --output_dir results\heatmaps --config $(CONFIG)
 
 # Clean results
 .PHONY: clean

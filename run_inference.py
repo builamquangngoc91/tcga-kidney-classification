@@ -526,6 +526,11 @@ def main():
         print(f"Running zero-shot classification with {len(prompts)} prompts")
         predictions, probs = inference.predict_zeroshot(features, prompts)
         
+        # Print normalized similarity scores for the first sample
+        if probs is not None and len(probs) > 0:
+            class_names = config['classification']['class_names']
+            print("Normalized similarity scores:", [f"{cls}: {score:.3f}" for cls, score in zip(class_names, probs[0])])
+        
     elif inference.classifier is not None:
         # Classifier-based prediction
         print("Running classifier-based prediction")
