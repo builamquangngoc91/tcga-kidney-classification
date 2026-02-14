@@ -87,14 +87,21 @@ class CONCHInference:
             try:
                 from conch import CONCH
                 checkpoint_path = model_config['conch_checkpoint_path']
+                print(f"Loading CONCH from {checkpoint_path}...")
                 self.model = CONCH(checkpoint_path)
                 self.model = self.model.to(self.device)
                 self.model.eval()
                 print("CONCH model loaded successfully!")
-            except ImportError:
-                print("CONCH package not found. Please install from:")
+            except ImportError as e:
+                print(f"CONCH import error: {e}")
+                print("Please install CONCH:")
                 print("  git clone https://github.com/mahmoodlab/CONCH.git")
                 print("  cd CONCH && pip install -e .")
+                self.model = None
+            except Exception as e:
+                print(f"Error loading CONCH model: {e}")
+                import traceback
+                traceback.print_exc()
                 self.model = None
                 
         except Exception as e:
@@ -321,6 +328,8 @@ class CONCHInference:
         
         # Get predictions
         zeroshot_config = self.config.get('zeroshot', {})
+        
+        print(f"DEBUG: zeroshot enabled = {zeroshot_config.get('enabled', False)}, model = {self.model}")
         
         if zeroshot_config.get('enabled', False) and self.model is not None:
             # Zero-shot classification
