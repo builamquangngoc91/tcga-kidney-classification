@@ -2,7 +2,7 @@
 Standalone CONCH model loading example.
 """
 import torch
-from conch.create_model import create_model_from_pretrained
+from conch.open_clip_custom import create_model_from_pretrained
 
 # Configuration
 model_cfg = 'conch_ViT-B-16'
