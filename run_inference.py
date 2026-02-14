@@ -85,11 +85,14 @@ class CONCHInference:
             
             # Import CONCH (if available)
             try:
-                from conch import CONCH
+                from conch.open_clip_custom import create_model_from_pretrained
                 checkpoint_path = model_config['conch_checkpoint_path']
                 print(f"Loading CONCH from {checkpoint_path}...")
-                self.model = CONCH(checkpoint_path)
-                self.model = self.model.to(self.device)
+                self.model, self.preprocess = create_model_from_pretrained(
+                    'conch_ViT-B-16', 
+                    checkpoint_path, 
+                    device=self.device
+                )
                 self.model.eval()
                 print("CONCH model loaded successfully!")
             except ImportError as e:
