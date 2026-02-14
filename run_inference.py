@@ -234,7 +234,11 @@ class CONCHInference:
         
         # Normalize embeddings (following CONCH example)
         text_embeddings = text_embeddings / text_embeddings.norm(dim=-1, keepdim=True)
-        features_normalized = features / np.linalg.norm(features, axis=1, keepdim=True)
+        
+        # Normalize image features using torch for consistency
+        features_tensor = torch.from_numpy(features).to(self.device)
+        features_normalized = features_tensor / features_tensor.norm(dim=1, keepdim=True)
+        features_normalized = features_normalized.cpu().numpy()
         
         # Compute similarities using logit_scale (following CONCH example)
         logit_scale = self.model.logit_scale.exp()
