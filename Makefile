@@ -22,6 +22,7 @@ help:
 	@echo "  make run-kirp        - Run inference on KIRP only"
 	@echo "  make run-cpu         - Run inference on CPU"
 	@echo "  make plot-heatmap   - Generate heatmaps from results"
+	@echo "  make plot-gif       - Generate similarity score GIF animation"
 	@echo "  make clean           - Clean results directory"
 	@echo "  make setup           - Create necessary directories"
 	@echo ""
@@ -86,6 +87,13 @@ plot-heatmap:
 	@echo "Generating heatmaps from results..."
 	@test -f results/predictions.csv || (echo "Error: results/predictions.csv not found. Run inference first!" && exit 1)
 	$(PYTHON) plot_heatmap.py --results results/predictions.csv --output_dir results/heatmaps --config $(CONFIG)
+
+# Generate similarity score GIF animation
+.PHONY: plot-gif
+plot-gif:
+	@echo "Generating similarity score GIF..."
+	@test -f results/predictions.csv || (echo "Error: results/predictions.csv not found. Run inference first!" && exit 1)
+	$(PYTHON) create_similarity_gif.py --results results/predictions.csv --output results/similarity_animation.gif --config $(CONFIG)
 
 # Clean results
 .PHONY: clean
