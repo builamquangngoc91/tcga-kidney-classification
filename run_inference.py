@@ -235,17 +235,25 @@ class CONCHInference:
         # Normalize embeddings (following CONCH example)
         text_embeddings = text_embeddings / text_embeddings.norm(dim=-1, keepdim=True)
         
-        # Normalize image features using torch for consistency
-        features_tensor = torch.from_numpy(features).to(self.device)
-        features_normalized = features_tensor / features_tensor.norm(dim=1, keepdim=True)
-        features_normalized = features_normalized.cpu().numpy()
+        # Normalize image features on CPU (avoid GPU memory issues)
+        norms = np.linalg.norm(features, axis=1, keepdims=True)
+        features_normalized = features / norms
         
-        # Compute similarities using logit_scale (following CONCH example)
+        # Compute similarities using logit_scale in batches (avoid OOM)
         logit_scale = self.model.logit_scale.exp()
-        similarities = (features_normalized @ text_embeddings.T * logit_scale).cpu().numpy()
         
-        # Apply softmax to get probabilities
-        probs = self._softmax(similarities, axis=1)
+        batch_size = 10000
+        n_samples = features_normalized.shape[0]
+        all_probs = []
+        
+        for start_idx in range(0, n_samples, batch_size):
+            end_idx = min(start_idx + batch_size, n_samples)
+            batch_features = torch.from_numpy(features_normalized[start_idx:end_idx]).to(self.device)
+            batch_similarities = (batch_features @ text_embeddings.T * logit_scale).cpu().numpy()
+            batch_probs = self._softmax(batch_similarities, axis=1)
+            all_probs.append(batch_probs)
+        
+        probs = np.vstack(all_probs)
         
         # Get predictions
         predictions = np.argmax(probs, axis=1)
