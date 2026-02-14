@@ -69,26 +69,30 @@ class CONCHInference:
         """Load CONCH model and classifier."""
         model_config = self.config['model']
         
-        # Check if model exists
-        if not os.path.exists(model_config['conch_model_path']):
-            print(f"Warning: Model not found at {model_config['conch_model_path']}")
+        # Check if checkpoint exists
+        checkpoint_path = model_config.get('conch_checkpoint_path')
+        if checkpoint_path and not os.path.exists(checkpoint_path):
+            print(f"Warning: Model checkpoint not found at {checkpoint_path}")
             print("Please download the CONCH model from HuggingFace:")
             print("  https://huggingface.co/MahmoodLab/CONCH")
-            print("\
-Falling back to feature-based classification (no text prompts)")
+            print("Falling back to feature-based classification (no text prompts)")
             self.model = None
             return
         
         try:
-            # Try to load CONCH model
-            # The exact loading method depends on the CONCH implementation
-            print(f"Loading CONCH model from {model_config['conch_model_path']}")
+            # Load CONCH model using create_model_from_pretrained
+            print(f"Loading CONCH model...")
             
             # Import CONCH (if available)
             try:
-                from conch import CONCH
-                self.model = CONCH(model_config['conch_model_path'])
-                self.model.to(self.device)
+                from conch.create_model import create_model_from_pretrained
+                model_cfg = model_config['conch_model_cfg']
+                checkpoint_path = model_config['conch_checkpoint_path']
+                self.model, self.preprocess = create_model_from_pretrained(
+                    model_cfg, 
+                    checkpoint_path, 
+                    device=self.device
+                )
                 self.model.eval()
                 print("CONCH model loaded successfully!")
             except ImportError:

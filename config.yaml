@@ -3,8 +3,8 @@
 
 # Paths
 model:
-  conch_model_path: "/project/hnguyen2/mvu9/pretrained_checkpoints/conch_checkpoints/pytorch_model.bin"  # Path to CONCH model
-  conch_config_path: "models/conch_config.json"     # Path to CONCH config
+  conch_model_cfg: "conch_ViT-B-16"          # CONCH model config
+  conch_checkpoint_path: "/project/hnguyen2/mvu9/pretrained_checkpoints/conch_checkpoints/pytorch_model.bin"  # Path to CONCH checkpoint
 
 data:
   # Path to h5 feature files
