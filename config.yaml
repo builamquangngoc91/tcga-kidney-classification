@@ -3,15 +3,15 @@
 
 # Paths
 model:
-  conch_checkpoint_path: "/project/hnguyen2/mvu9/pretrained_checkpoints/conch_checkpoints/pytorch_model.bin"  # Path to CONCH checkpoint
+  conch_checkpoint_path: "/home/mvu9/pretrained_checkpoints/conch_checkpoints/pytorch_model.bin"  # Path to CONCH checkpoint
 
 data:
   # Path to h5 feature files
   # Can be a glob pattern or list of paths
   h5_features_path:
-    - "/project/hnguyen2/mvu9/processing_datasets/processing_tcga_256/kirc/conch_features_fp/patch_256x256_20x/h5_files/*.h5"
-    - "/project/hnguyen2/mvu9/processing_datasets/processing_tcga_256/kich/conch_features_fp/patch_256x256_20x/h5_files/*.h5"
-    - "/project/hnguyen2/mvu9/processing_datasets/processing_tcga_256/kirp/conch_features_fp/patch_256x256_20x/h5_files/*.h5"
+    - "/home/mvu9/processing_datasets/processing_tcga_256/kirc/conch_features_fp/patch_256x256_20x/h5_files/*.h5"
+    - "/home/mvu9/processing_datasets/processing_tcga_256/kich/conch_features_fp/patch_256x256_20x/h5_files/*.h5"
+    - "/home/mvu9/processing_datasets/processing_tcga_256/kirp/conch_features_fp/patch_256x256_20x/h5_files/*.h5"
   
   # Optional: path to labels CSV (if available for validation)
   labels_path: null

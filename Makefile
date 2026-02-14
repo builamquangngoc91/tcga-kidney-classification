@@ -2,9 +2,9 @@
 # TCGA Kidney: KIRC, KICH, KIRP (3 tumor types)
 
 PYTHON := python
-H5_PATH_KIRC := /project/hnguyen2/mvu9/processing_datasets/processing_tcga_256/kirc/conch_features_fp/patch_256x256_20x/h5_files/*.h5
-H5_PATH_KICH := /project/hnguyen2/mvu9/processing_datasets/processing_tcga_256/kich/conch_features_fp/patch_256x256_20x/h5_files/*.h5
-H5_PATH_KIRP := /project/hnguyen2/mvu9/processing_datasets/processing_tcga_256/kirp/conch_features_fp/patch_256x256_20x/h5_files/*.h5
+H5_PATH_KIRC := /home/mvu9/processing_datasets/processing_tcga_256/kirc/conch_features_fp/patch_256x256_20x/h5_files/*.h5
+H5_PATH_KICH := /home/mvu9/processing_datasets/processing_tcga_256/kich/conch_features_fp/patch_256x256_20x/h5_files/*.h5
+H5_PATH_KIRP := /home/mvu9/processing_datasets/processing_tcga_256/kirp/conch_features_fp/patch_256x256_20x/h5_files/*.h5
 OUTPUT_DIR := results
 CONFIG := config.yaml
 DEVICE := cuda
