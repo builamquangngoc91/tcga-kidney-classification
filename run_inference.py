@@ -62,6 +62,7 @@ class CONCHInference:
         
         # Load model
         self.model = None
+        self.tokenizer = None
         self.classifier = None
         self._load_model()
         
@@ -85,7 +86,7 @@ class CONCHInference:
             
             # Import CONCH (if available)
             try:
-                from conch.open_clip_custom import create_model_from_pretrained
+                from conch.open_clip_custom import create_model_from_pretrained, tokenize, get_tokenizer
                 checkpoint_path = model_config['conch_checkpoint_path']
                 print(f"Loading CONCH from {checkpoint_path}...")
                 self.model, self.preprocess = create_model_from_pretrained(
@@ -93,6 +94,8 @@ class CONCHInference:
                     checkpoint_path, 
                     device=self.device
                 )
+                # Get tokenizer
+                self.tokenizer = get_tokenizer()
                 self.model.eval()
                 print("CONCH model loaded successfully!")
             except ImportError as e:
@@ -101,11 +104,13 @@ class CONCHInference:
                 print("  git clone https://github.com/mahmoodlab/CONCH.git")
                 print("  cd CONCH && pip install -e .")
                 self.model = None
+                self.tokenizer = None
             except Exception as e:
                 print(f"Error loading CONCH model: {e}")
                 import traceback
                 traceback.print_exc()
                 self.model = None
+                self.tokenizer = None
                 
         except Exception as e:
             print(f"Error loading model: {e}")
@@ -215,22 +220,27 @@ class CONCHInference:
             print("Error: CONCH model not loaded. Cannot perform zero-shot classification.")
             return None, None
         
-        # Encode text prompts
-        text_embeddings = self.model.encode_text(prompts)
-        text_embeddings = text_embeddings / text_embeddings.norm(dim=-1, keepdim=True)
+        # Tokenize text prompts
+        if self.tokenizer is None:
+            print("Error: No tokenizer available. Cannot perform zero-shot classification.")
+            return None, None
         
-        # Normalize image features
+        # Tokenize prompts using CONCH's tokenize function
+        from conch.open_clip_custom import tokenize
+        text_tokens = tokenize(texts=prompts, tokenizer=self.tokenizer).to(self.device)
+        
+        # Encode text prompts
+        text_embeddings = self.model.encode_text(text_tokens)
+        
+        # Normalize embeddings (following CONCH example)
+        text_embeddings = text_embeddings / text_embeddings.norm(dim=-1, keepdim=True)
         features_normalized = features / np.linalg.norm(features, axis=1, keepdim=True)
         
-        # Compute similarities
-        similarities = features_normalized @ text_embeddings.T
+        # Compute similarities using logit_scale (following CONCH example)
+        logit_scale = self.model.logit_scale.exp()
+        similarities = (features_normalized @ text_embeddings.T * logit_scale).cpu().numpy()
         
-        # Get temperature from config
-        zeroshot_config = self.config.get('zeroshot', {})
-        temperature = zeroshot_config.get('temperature', 0.01)
-        
-        # Apply temperature and softmax
-        similarities = similarities / temperature
+        # Apply softmax to get probabilities
         probs = self._softmax(similarities, axis=1)
         
         # Get predictions
@@ -332,7 +342,7 @@ class CONCHInference:
         # Get predictions
         zeroshot_config = self.config.get('zeroshot', {})
         
-        print(f"DEBUG: zeroshot enabled = {zeroshot_config.get('enabled', False)}, model = {self.model}")
+        print(f"DEBUG: zeroshot enabled = {zeroshot_config.get('enabled', False)}, model = {self.model}, tokenizer = {self.tokenizer}")
         
         if zeroshot_config.get('enabled', False) and self.model is not None:
             # Zero-shot classification
@@ -498,7 +508,7 @@ def main():
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
     
-    if zeroshot_config.get('enabled', False) and inference.model is not None:
+    if zeroshot_config.get('enabled', False) and inference.model is not None and inference.tokenizer is not None:
         # Zero-shot classification
         prompts = zeroshot_config.get('prompts', [])
         print(f"Running zero-shot classification with {len(prompts)} prompts")
