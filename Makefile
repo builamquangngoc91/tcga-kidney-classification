@@ -84,11 +84,8 @@ run-cpu:
 .PHONY: plot-heatmap
 plot-heatmap:
 	@echo "Generating heatmaps from results..."
-	@if not exist results\predictions.csv (
-		echo "Error: results\predictions.csv not found. Run inference first!"
-		exit /b 1
-	)
-	$(PYTHON) plot_heatmap.py --results results\predictions.csv --output_dir results\heatmaps --config $(CONFIG)
+	@test -f results/predictions.csv || (echo "Error: results/predictions.csv not found. Run inference first!" && exit 1)
+	$(PYTHON) plot_heatmap.py --results results/predictions.csv --output_dir results/heatmaps --config $(CONFIG)
 
 # Clean results
 .PHONY: clean
