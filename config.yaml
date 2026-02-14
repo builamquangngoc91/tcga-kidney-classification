@@ -1,0 +1,77 @@
+# CONCH TCGA Kidney Classification Configuration
+# TCGA Kidney: KIRC, KICH, KIRP (3 tumor types)
+
+# Paths
+model:
+  conch_model_path: "models/pytorch_model.bin"  # Path to CONCH model
+  conch_config_path: "models/conch_config.json"     # Path to CONCH config
+
+data:
+  # Path to h5 feature files
+  # Can be a glob pattern or list of paths
+  h5_features_path:
+    - "/project/hnguyen2/mvu9/processing_datasets/processing_tcga_256/kirc/conch_features_fp/patch_256x256_20x/h5_files/*.h5"
+    - "/project/hnguyen2/mvu9/processing_datasets/processing_tcga_256/kich/conch_features_fp/patch_256x256_20x/h5_files/*.h5"
+    - "/project/hnguyen2/mvu9/processing_datasets/processing_tcga_256/kirp/conch_features_fp/patch_256x256_20x/h5_files/*.h5"
+  
+  # Optional: path to labels CSV (if available for validation)
+  labels_path: null
+  
+  # Feature key in h5 file
+  features_key: "features"
+  
+  # Slide IDs key in h5 file
+  slide_ids_key: "slide_id"
+
+inference:
+  # Batch size for inference
+  batch_size: 32
+  
+  # Device: "cuda" or "cpu"
+  device: "cuda"
+  
+  # Number of workers for data loading
+  num_workers: 4
+
+output:
+  # Output directory for predictions
+  results_dir: "results"
+  
+  # Output filename
+  output_file: "predictions.csv"
+  
+  # Save probabilities as well
+  save_probabilities: true
+  
+  # Probability output file
+  prob_file: "probabilities.csv"
+
+# Classification settings
+classification:
+  # TCGA Kidney has 3 tumor types: KIRC, KICH, KIRP
+  num_classes: 3
+  
+  # Class names for TCGA kidney tumor types
+  class_names:
+    - "Kidney Renal Clear Cell Carcinoma (KIRC)"
+    - "Kidney Chromophobe (KICH)"
+    - "Kidney Renal Papillary Cell Carcinoma (KIRP)"
+  
+  # Use pretrained classifier or zero-shot
+  use_pretrained: false
+  
+  # Classifier checkpoint path (if use_pretrained is true)
+  classifier_path: null
+
+# Zero-shot classification settings (if using CLIP-style text prompts)
+zeroshot:
+  enabled: false
+  
+  # Text prompts for each TCGA kidney tumor type
+  prompts:
+    - "Kidney renal clear cell carcinoma, KIRC"
+    - "Kidney chromophobe carcinoma, KICH"
+    - "Kidney renal papillary cell carcinoma, KIRP"
+  
+  # Temperature for softmax
+  temperature: 0.01
