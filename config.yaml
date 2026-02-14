@@ -71,9 +71,9 @@ zeroshot:
   
   # Text prompts for each TCGA kidney tumor type
   prompts:
-    - "Kidney renal clear cell carcinoma, KIRC"
-    - "Kidney chromophobe carcinoma, KICH"
-    - "Kidney renal papillary cell carcinoma, KIRP"
+    - "a histology image of kidney renal clear cell carcinoma (KIRC) showing clear cytoplasm and compact nests of cells"
+    - "a histology image of kidney chromophobe carcinoma (KICH) showing large pale cells with prominent cell borders"
+    - "a histology image of kidney renal papillary cell carcinoma (KIRP) showing papillary structures with fibrovascular cores"
   
   # Temperature for softmax
   temperature: 0.01
